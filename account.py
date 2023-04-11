@@ -12,8 +12,11 @@ class Account:
         Account.totalDeposits += amt
 
     def withdraw(self, amt):
-        self._balance -= amt
-        Account.totalDeposits -= amt
+        if amt > self._balance:
+            raise InsufficientFundsException(amt)
+        else:
+            self._balance -= amt
+            return f"Account now has {self._balance}"
 
     def getbalance(self):
         return self._balance
@@ -22,7 +25,7 @@ class Account:
         pass
 
     def __str__(self):
-        return f"Account id: £{self.getbalance()}"
+        return f"Account ID: £{self.getbalance()}"
 
     def __gt__(self, other):
         return self._balance > other.getbalance()
@@ -33,3 +36,11 @@ class Account:
     @classmethod
     def get_total_balance(cls):
         return f"The Bank of Jade has reserves of:  £{cls.totalDeposits}"
+
+
+class InsufficientFundsException(Exception):
+
+    def __init__(self, funds):
+        self.msg = f"Not enough funds to withdraw £{funds}."
+    def __str__(self):
+        return self.msg
